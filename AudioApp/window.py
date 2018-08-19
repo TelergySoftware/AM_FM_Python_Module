@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QAction, QToolBar
+from PyQt5.QtCore import Qt
 import sys
 
 
@@ -10,7 +11,7 @@ class CentralWidget(QWidget):
 
         :param parent: Widget
         """
-        super(CentralWidget, self).__init__(parent=parent)
+        super(CentralWidget, self).__init__(parent=parent, flags=Qt.Widget)
 
         self.init_ui()
 
@@ -34,10 +35,16 @@ class MainWindow(QMainWindow):
         :param resolution: int tuple
         :param parent: Widget
         """
-        super(MainWindow, self).__init__(parent=parent)
+        super(MainWindow, self).__init__(parent=parent, flags=Qt.Window)
 
         self.setWindowTitle(title)
         self.resize(resolution[0], resolution[1])  # Change initial window size to resolution parameter
+
+        self.tool_bar = QToolBar()  # Create a QToolBar object
+
+        # Create QAction objects that are going to be used in tool_bar
+        self.file_action = QAction("&File")
+        self.tools_action = QAction("&Tools")
 
         self.init_ui()
 
@@ -47,13 +54,16 @@ class MainWindow(QMainWindow):
         :return: None
         """
 
+        self.addToolBar(self.tool_bar)
+
+        self.tool_bar.addAction(self.file_action)
+        self.tool_bar.addAction(self.tools_action)
+
         self.show()  # Set self visible
 
 
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    main_window = MainWindow()
+    main_window = MainWindow("Audio App")
     sys.exit(app.exec_())
-
-
