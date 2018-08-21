@@ -46,8 +46,8 @@ public:
         /// This method creates an AM wave according to the parameters
         /// and stores it into the wave numpy ndarray
 
-//        boost::python::tuple shape = boost::python::make_tuple(buffer_size, 1);
-//        np::dtype dtype = np::dtype::get_builtin<float>();
+        boost::python::tuple shape = boost::python::make_tuple(buffer_size, 1);
+        np::dtype dtype = np::dtype::get_builtin<float>();
 
         np::array wave = np::zeros(shape, dtype);
         float s;
