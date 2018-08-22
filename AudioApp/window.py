@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QAction, QToolBar
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QAction, QToolBar, QPushButton, QVBoxLayout
 from PyQt5.QtCore import Qt
+from matplotlib import pyplot
 import sys
-import PyAFM
+from PyWave.PyAFM import AFMWave
 
 
 class CentralWidget(QWidget):
@@ -14,6 +15,14 @@ class CentralWidget(QWidget):
         """
         super(CentralWidget, self).__init__(parent=parent, flags=Qt.Widget)
 
+        self.vertical_layout = QVBoxLayout()
+        self.wave = AFMWave(60, 4, 1024)
+        self.wave.setAMDepth(1)
+        self.wave.setAMFrequency(10)
+        self.wave.setDT(0.0005)
+
+        self.test_button = QPushButton("Test!!")  # Just testing matplotlib
+
         self.init_ui()
 
     def init_ui(self) -> None:
@@ -23,7 +32,22 @@ class CentralWidget(QWidget):
         :return: None
         """
 
+        self.test_button.clicked.connect(self.plot)
+
+        self.vertical_layout.addWidget(self.test_button)
+
+        self.setLayout(self.vertical_layout)
+
         self.show()  # Set self visible
+
+    def plot(self) -> None:
+        """
+        A simple test
+
+        :return: None
+        """
+        pyplot.plot(range(1024), self.wave.getAMWave())
+        pyplot.show()
 
 
 class MainWindow(QMainWindow):
@@ -37,6 +61,8 @@ class MainWindow(QMainWindow):
         :param parent: Widget
         """
         super(MainWindow, self).__init__(parent=parent, flags=Qt.Window)
+
+        self.central_widget = CentralWidget(self)
 
         self.setWindowTitle(title)
         self.resize(resolution[0], resolution[1])  # Change initial window size to resolution parameter
@@ -59,6 +85,8 @@ class MainWindow(QMainWindow):
         Initialize ui elements
         :return: None
         """
+
+        self.setCentralWidget(self.central_widget)
 
         self.addToolBar(self.tool_bar)
 
