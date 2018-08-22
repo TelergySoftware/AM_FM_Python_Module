@@ -15,11 +15,13 @@ class CentralWidget(QWidget):
         """
         super(CentralWidget, self).__init__(parent=parent, flags=Qt.Widget)
 
-        self.vertical_layout = QVBoxLayout()
+        self.vertical_layout = QVBoxLayout()  # Create a vertical layout container
+        
+        # Create an object of AFMWave with carrier frequency of 60Hz, 4 of amplitude and buffer size of 1024
         self.wave = AFMWave(60, 4, 1024)
         self.wave.setAMDepth(1)
         self.wave.setAMFrequency(10)
-        self.wave.setDT(0.0005)
+        self.wave.setDT(0.0005)  # Value of dt in seconds
 
         self.test_button = QPushButton("Test!!")  # Just testing matplotlib
 
@@ -32,11 +34,11 @@ class CentralWidget(QWidget):
         :return: None
         """
 
-        self.test_button.clicked.connect(self.plot)
+        self.test_button.clicked.connect(self.plot)  # When test button is clicked, call self.plot
 
-        self.vertical_layout.addWidget(self.test_button)
+        self.vertical_layout.addWidget(self.test_button)  # Add test button to vertical_layout
 
-        self.setLayout(self.vertical_layout)
+        self.setLayout(self.vertical_layout)  # Set this widget layout as vertical_layout
 
         self.show()  # Set self visible
 
@@ -62,7 +64,7 @@ class MainWindow(QMainWindow):
         """
         super(MainWindow, self).__init__(parent=parent, flags=Qt.Window)
 
-        self.central_widget = CentralWidget(self)
+        self.central_widget = CentralWidget(self)  # Create a CentralWidget object and set self as parent
 
         self.setWindowTitle(title)
         self.resize(resolution[0], resolution[1])  # Change initial window size to resolution parameter
@@ -86,10 +88,11 @@ class MainWindow(QMainWindow):
         :return: None
         """
 
-        self.setCentralWidget(self.central_widget)
+        self.setCentralWidget(self.central_widget)  # Set central_widget as the MainWindow's central widget
 
-        self.addToolBar(self.tool_bar)
-
+        self.addToolBar(self.tool_bar)  # Add tool_bar in the screen
+        
+        # Set top menu actions
         self.file_menu.addAction(self.exit_action)
         self.help_menu.addAction(self.about_action)
 
