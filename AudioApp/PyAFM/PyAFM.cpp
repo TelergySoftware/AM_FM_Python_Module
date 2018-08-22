@@ -6,6 +6,7 @@
 #include <boost/python/numpy.hpp>
 #include <boost/python/def.hpp>
 #include <boost/python/module.hpp>
+#include <Python.h>
 
 using namespace boost::python;
 namespace np = boost::python::numpy;
@@ -46,10 +47,10 @@ public:
         /// This method creates an AM wave according to the parameters
         /// and stores it into the wave numpy ndarray
 
-//        boost::python::tuple shape = boost::python::make_tuple(buffer_size, 1);
-//        np::dtype dtype = np::dtype::get_builtin<float>();
+        boost::python::tuple shape = boost::python::make_tuple(buffer_size, 1);
+        np::dtype dtype = np::dtype::get_builtin<float>();
 
-        np::array wave = np::zeros(shape, dtype);
+        np::ndarray wave = np::zeros(shape, dtype);
         float s;
 
         for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and store it into wave

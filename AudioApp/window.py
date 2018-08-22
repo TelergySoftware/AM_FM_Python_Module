@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QAction, QToolBar
 from PyQt5.QtCore import Qt
 import sys
+import PyAFM
 
 
 class CentralWidget(QWidget):
@@ -42,9 +43,14 @@ class MainWindow(QMainWindow):
 
         self.tool_bar = QToolBar()  # Create a QToolBar object
 
+        # Create menus that are going to be used in the top menu
+        self.file_menu = self.menuBar().addMenu("&File")
+        self.tools_menu = self.menuBar().addMenu("&Tools")
+        self.help_menu = self.menuBar().addMenu("&Help")
+
         # Create QAction objects that are going to be used in tool_bar
-        self.file_action = QAction("&File")
-        self.tools_action = QAction("&Tools")
+        self.exit_action = QAction("Exit", self)
+        self.about_action = QAction("About", self)
 
         self.init_ui()
 
@@ -56,8 +62,8 @@ class MainWindow(QMainWindow):
 
         self.addToolBar(self.tool_bar)
 
-        self.tool_bar.addAction(self.file_action)
-        self.tool_bar.addAction(self.tools_action)
+        self.file_menu.addAction(self.exit_action)
+        self.help_menu.addAction(self.about_action)
 
         self.show()  # Set self visible
 
