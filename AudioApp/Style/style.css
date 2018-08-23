@@ -1,0 +1,77 @@
+QWidget
+{
+    background-color : #61656b
+}
+
+QMainWindow::separator
+{
+    background : #343538;
+    width : 2px;
+    height : 2px;
+}
+
+QPushButton
+{
+    background-color : #343538;
+    border-width : 2px;
+    border-style : outset;
+    border-radius : 5px;
+    border-color : #313a56;
+    padding : 5px;
+}
+
+QPushButton:pressed
+{
+    background-color : #414963;
+    border-style : inset
+}
+
+QDockWidget
+{
+    background: #606268;
+    border : 5px;
+    border-color : #313a56
+}
+
+QDockWidget::title
+{
+    text-align = center;
+    background : #71747a;
+    padding = 5px;
+}
+
+QMenuBar
+{
+    background-color: #71747a;
+}
+
+QMenuBar::item
+{
+    spacing : 2px;
+    padding : 3px 3px;
+    background : transparent;
+    border-radius : 1px
+}
+
+QMenuBar::item:selected
+{
+    background-color : #909196;
+}
+
+QMenu
+{
+    background-color : #909196;
+    margin : 2px;
+}
+
+QMenu::item
+{
+    background-color : transparent;
+}
+
+QToolBar
+{
+    background-color : #71747a;
+    min-height : 40px;
+    min-width : 60px;
+}
