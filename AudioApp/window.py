@@ -1,8 +1,45 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QAction, QToolBar, QPushButton, QVBoxLayout, QDockWidget
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QTabWidget, QAction, QToolBar, QPushButton,
+                             QVBoxLayout, QHBoxLayout, QDockWidget, QLineEdit, QLabel)
 from PyQt5.QtCore import Qt
-from matplotlib import pyplot
 import sys
 from PyWave.PyAFM import AFMWave
+
+
+class DockElement(QWidget):
+
+    def __init__(self, label: str="", parent=None):
+
+        super(DockElement, self).__init__(parent=parent, flags=Qt.Widget)
+
+        self.label = QLabel(label)  # Set label text
+        self.line_edit = QLineEdit()
+
+        self.horizontal_layout = QHBoxLayout()
+
+        self.init_ui()
+        
+    def init_ui(self):
+
+        self.line_edit.setMinimumWidth(100)
+
+        self.horizontal_layout.setAlignment(Qt.AlignRight)
+
+        self.horizontal_layout.addWidget(self.label, alignment=Qt.AlignLeft)
+        self.horizontal_layout.addStretch()
+        self.horizontal_layout.addWidget(self.line_edit, alignment=Qt.AlignRight)
+
+        self.setLayout(self.horizontal_layout)
+
+        self.show()
+
+    def set_text(self, text: float) -> None:
+
+        self.line_edit.setText(str(text))
+
+    def get_value(self) -> float:
+
+        value = float(self.line_edit.text())
+        return value
 
 
 class DockContainer(QWidget):
@@ -18,10 +55,13 @@ class DockContainer(QWidget):
 
         self.vertical_layout = QVBoxLayout()  # Create a vertical layout container
 
-        # Adding some buttons
-        self.button1 = QPushButton("Button 1")
-        self.button2 = QPushButton("Button 2")
-        self.button3 = QPushButton("Button 3")
+        # Adding some elements
+        self.am_frequency_element = DockElement("AM Frequency:")
+        self.am_depth_element = DockElement("AM Depth:")
+        self.dt_element = DockElement("DT:")
+
+        # Test button
+        self.test_button = QPushButton("Test button")
 
         self.init_ui()
 
@@ -32,14 +72,37 @@ class DockContainer(QWidget):
         :return: None
         """
 
+        # bind action to button
+        self.test_button.clicked.connect(self.show_values)
+
         # Add all widgets to the vertical_layout
-        self.vertical_layout.addWidget(self.button1, alignment=Qt.AlignCenter)
-        self.vertical_layout.addWidget(self.button2, alignment=Qt.AlignCenter)
-        self.vertical_layout.addWidget(self.button3, alignment=Qt.AlignCenter)
+        self.vertical_layout.addWidget(self.am_frequency_element)
+        self.vertical_layout.addWidget(self.am_depth_element)
+        self.vertical_layout.addWidget(self.dt_element)
+
+        # Set default values
+        self.am_frequency_element.set_text(60)
+        self.am_depth_element.set_text(1)
+        self.dt_element.set_text(0.0005)
+
+        self.vertical_layout.addWidget(self.test_button, alignment=Qt.AlignCenter)
+
+        self.vertical_layout.addStretch()  # Keep widgets at the top of the vertical_layout
 
         self.setLayout(self.vertical_layout)  # Set self layout as vertical_layout
 
         self.show()  # Set self visible
+
+    def show_values(self) -> None:
+        """
+        To be deleted
+        :return: None
+        """
+        values = str(self.am_frequency_element.get_value())
+        values += " " + str(self.am_depth_element.get_value())
+        values += " " + str(self.dt_element.get_value())
+
+        main_window.statusBar().showMessage(values, 10000)
 
 
 class DockWidget(QDockWidget):
@@ -72,7 +135,7 @@ class DockWidget(QDockWidget):
         self.show()  # Set self visible
 
 
-class CentralWidget(QWidget):
+class TabWidget(QWidget):
 
     def __init__(self, parent=None):
         """
@@ -80,17 +143,34 @@ class CentralWidget(QWidget):
 
         :param parent: Widget
         """
-        super(CentralWidget, self).__init__(parent=parent, flags=Qt.Widget)
+        super(TabWidget, self).__init__(parent=parent, flags=Qt.Widget)
+
+        self.init_ui()
+
+    def init_ui(self) -> None:
+        """
+        Initialize ui elements
+        :return: None
+        """
+
+        self.show()  # Set self visible
+
+
+class CentralWidget(QTabWidget):
+
+    def __init__(self, parent=None):
+        """
+        Class constructor
+
+        :param parent: Widget
+        """
+        super(CentralWidget, self).__init__(parent=parent)
 
         self.vertical_layout = QVBoxLayout()  # Create a vertical layout container
-        
-        # Create an object of AFMWave with carrier frequency of 60Hz, 4 of amplitude and buffer size of 1024
-        self.wave = AFMWave(60, 4, 1024)
-        self.wave.setAMDepth(1)
-        self.wave.setAMFrequency(10)
-        self.wave.setDT(0.0005)  # Value of dt in seconds
 
-        self.test_button = QPushButton("Test!!")  # Just testing matplotlib
+        # Create Right and Left ear window tab object
+        self.right_tab = TabWidget()
+        self.left_tab = TabWidget()
 
         self.init_ui()
 
@@ -100,25 +180,11 @@ class CentralWidget(QWidget):
 
         :return: None
         """
-
-        self.setObjectName("CentralWidget")
-
-        self.test_button.clicked.connect(self.plot)  # When test button is clicked, call self.plot
-
-        self.vertical_layout.addWidget(self.test_button)  # Add test button to vertical_layout
-
-        self.setLayout(self.vertical_layout)  # Set this widget layout as vertical_layout
+        # Add tabs to self
+        self.addTab(self.left_tab, "Left Ear")
+        self.addTab(self.right_tab, "Right Ear")
 
         self.show()  # Set self visible
-
-    def plot(self) -> None:
-        """
-        A simple test
-
-        :return: None
-        """
-        pyplot.plot(range(1024), self.wave.getAMWave())
-        pyplot.show()
 
 
 class MainWindow(QMainWindow):
@@ -137,7 +203,7 @@ class MainWindow(QMainWindow):
         self.dock_widget = DockWidget("Options", self)
 
         self.setWindowTitle(title)
-        self.resize(resolution[0], resolution[1])  # Change initial window size to resolution parameter
+        self.resize(resolution[0], resolution[1])  # Change window size to resolution parameter
 
         self.tool_bar = QToolBar()  # Create a QToolBar object
 
@@ -157,10 +223,15 @@ class MainWindow(QMainWindow):
         Initialize ui elements
         :return: None
         """
+        # Actions setup
+        self.exit_action.setShortcut("Ctrl+Q")
+        self.exit_action.triggered.connect(self.exit)
 
         self.setCentralWidget(self.central_widget)  # Set central_widget as the MainWindow's central widget
 
         self.addToolBar(self.tool_bar)  # Add tool_bar in the screen
+
+        self.statusBar()  # Add the status bar in the screen
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_widget, Qt.Vertical)  # Set dock_widget in the screen
         
@@ -170,6 +241,13 @@ class MainWindow(QMainWindow):
 
         self.showMaximized()
         self.show()  # Set self visible
+
+    def exit(self) -> None:
+        """
+        Used to close the main window
+        :return: None
+        """
+        self.close()
 
 
 def get_style() -> str:

@@ -6,8 +6,18 @@ QWidget
 QMainWindow::separator
 {
     background : #343538;
-    width : 2px;
-    height : 2px;
+    width : 3px;
+    height : 3px;
+}
+
+QStatusBar
+{
+    background : #343538;
+}
+
+QStatusBar::text
+{
+    color : white
 }
 
 QPushButton
@@ -30,12 +40,13 @@ QDockWidget
 {
     background: #606268;
     border : 5px;
-    border-color : #313a56
+    border-color : #313a56;
+    font : bold;
+
 }
 
 QDockWidget::title
 {
-    text-align = center;
     background : #71747a;
     padding = 5px;
 }
