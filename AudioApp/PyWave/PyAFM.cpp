@@ -66,6 +66,53 @@ public:
         return wave;
     }
 
+    np::ndarray getFMWave()
+    {
+        /// This method creates an FM wave according to the parameters
+        /// and stores it into the wave numpy ndarray
+
+        boost::python::tuple shape = boost::python::make_tuple(buffer_size, 1);
+        np::dtype dtype = np::dtype::get_builtin<float>();
+
+        np::ndarray wave = np::zeros(shape, dtype);
+        float s;
+
+        for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and store it into wave
+        {
+            float aux = 2 * pi * carrier_frequency * dt * i;
+            aux += (fm_depth * carrier_frequency) / (2 * fm_frequency) * sin(2 * pi * fm_frequency * dt * i);
+            s = amplitude * sin(aux);
+            wave[i] = s;
+        }
+        return wave;
+    }
+
+    np::ndarray getAFMWave()
+    {
+        /// This method creates an AM combined with an FM wave according to the parameters
+        /// and stores it into the wave numpy ndarray
+
+        boost::python::tuple shape = boost::python::make_tuple(buffer_size, 1);
+        np::dtype dtype = np::dtype::get_builtin<float>();
+
+        np::ndarray wave = np::zeros(shape, dtype);
+        float s;
+
+        for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and store it into wave
+        {
+            s = amplitude * (1 + am_depth * sin(2 * pi * am_frequency * dt * i));
+            float aux = 2 * pi * carrier_frequency * dt * i;
+            aux += (fm_depth * carrier_frequency) / (2 * fm_frequency) * sin(2 * pi * fm_frequency * dt * i);
+            s *= sin(aux);
+            aux = 1 + pow(am_depth, 2) / 2;
+            aux = sqrt(aux);
+            s /= aux;
+
+            wave[i] = s;
+        }
+        return wave;
+    }
+
 private:
     float carrier_frequency;
     float amplitude;
@@ -100,5 +147,7 @@ BOOST_PYTHON_MODULE(PyAFM)
         .def("getFMDepth", &AFMWave::getFMDepth)
         .def("getDT", &AFMWave::getDT)
         .def("getBufferSize", &AFMWave::getBufferSize)
-        .def("getAMWave", &AFMWave::getAMWave);
+        .def("getAMWave", &AFMWave::getAMWave)
+        .def("getFMWave", &AFMWave::getFMWave)
+        .def("getAFMWave", &AFMWave::getAFMWave);
 }

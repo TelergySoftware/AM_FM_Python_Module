@@ -171,6 +171,7 @@ class CentralWidget(QTabWidget):
         # Create Right and Left ear window tab object
         self.right_tab = TabWidget()
         self.left_tab = TabWidget()
+        self.results_tab = TabWidget()
 
         self.init_ui()
 
@@ -183,6 +184,7 @@ class CentralWidget(QTabWidget):
         # Add tabs to self
         self.addTab(self.left_tab, "Left Ear")
         self.addTab(self.right_tab, "Right Ear")
+        self.addTab(self.results_tab, "Results")
 
         self.show()  # Set self visible
 
