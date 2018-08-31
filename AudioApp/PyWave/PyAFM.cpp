@@ -53,7 +53,7 @@ public:
         np::ndarray wave = np::zeros(shape, dtype);
         float s;
 
-        for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and store it into wave
+        for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and stores it into wave
         {
             s = amplitude * (1 + am_depth * sin(2 * pi * am_frequency * dt * i));
             float aux = 2 * pi * carrier_frequency * dt * i;
@@ -77,7 +77,7 @@ public:
         np::ndarray wave = np::zeros(shape, dtype);
         float s;
 
-        for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and store it into wave
+        for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and stores it into wave
         {
             float aux = 2 * pi * carrier_frequency * dt * i;
             aux += (fm_depth * carrier_frequency) / (2 * fm_frequency) * sin(2 * pi * fm_frequency * dt * i);
@@ -98,7 +98,7 @@ public:
         np::ndarray wave = np::zeros(shape, dtype);
         float s;
 
-        for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and store it into wave
+        for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and stores it into wave
         {
             s = amplitude * (1 + am_depth * sin(2 * pi * am_frequency * dt * i));
             float aux = 2 * pi * carrier_frequency * dt * i;

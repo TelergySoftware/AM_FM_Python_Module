@@ -3,6 +3,9 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QTabWidget, QAc
 from PyQt5.QtCore import Qt
 import sys
 from PyWave.PyAFM import AFMWave
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.fftpack
 
 
 class DockElement(QWidget):
@@ -98,11 +101,22 @@ class DockContainer(QWidget):
         To be deleted
         :return: None
         """
-        values = str(self.am_frequency_element.get_value())
-        values += " " + str(self.am_depth_element.get_value())
-        values += " " + str(self.dt_element.get_value())
+        wave = AFMWave(180, 4, 1024)
 
-        main_window.statusBar().showMessage(values, 10000)
+        wave.setAMFrequency(self.am_frequency_element.get_value())
+        wave.setAMDepth(self.am_depth_element.get_value())
+        wave.setDT(self.dt_element.get_value())
+
+        N = wave.getBufferSize()
+        # sample spacing
+        T = wave.getDT()
+        y = wave.getAMWave()
+        yf = scipy.fftpack.fft(y)
+        xf = np.linspace(0.0, 1.0 / (2.0 * T), N / 2)
+
+        fig, ax = plt.subplots()
+        ax.plot(xf, 2.0 / N * np.abs(yf[:N // 2]))
+        plt.show()
 
 
 class DockWidget(QDockWidget):
