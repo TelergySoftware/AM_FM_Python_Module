@@ -30,7 +30,7 @@ public:
     void setFMFrequency(float frequency) {this->fm_frequency = frequency;}
     void setAMDepth(float depth) {this->am_depth = depth;}
     void setFMDepth(float depth) {this->fm_depth = depth;}
-    void setDT(float dt) {this->dt = dt;}
+    void setFS(float fs) {this->fs = fs;}
     void setBufferSize(int buffer_size) {this->buffer_size = buffer_size;}
     /// Getter methods
     float getCarrierFrequency() {return this->carrier_frequency;}
@@ -39,7 +39,7 @@ public:
     float getFMFrequency() {return this->fm_frequency;}
     float getAMDepth() {return this->am_depth;}
     float getFMDepth() {return this->fm_depth;}
-    float getDT() {return this->dt;}
+    float getFS() {return this->fs;}
     int getBufferSize() {return this->buffer_size;}
     /// Utilities methods
     np::ndarray getAMWave()
@@ -55,8 +55,8 @@ public:
 
         for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and stores it into wave
         {
-            s = amplitude * (1 + am_depth * sin(2 * pi * am_frequency * dt * i));
-            float aux = 2 * pi * carrier_frequency * dt * i;
+            s = amplitude * (1 + am_depth * sin(2 * pi * am_frequency / fs * i));
+            float aux = 2 * pi * carrier_frequency / fs * i;
             s = s * sin(aux);
             aux = 1 + pow(am_depth, 2) / 2;
             aux = sqrt(aux);
@@ -79,8 +79,8 @@ public:
 
         for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and stores it into wave
         {
-            float aux = 2 * pi * carrier_frequency * dt * i;
-            aux += (fm_depth * carrier_frequency) / (2 * fm_frequency) * sin(2 * pi * fm_frequency * dt * i);
+            float aux = 2 * pi * carrier_frequency / fs * i;
+            aux += (fm_depth * carrier_frequency) / (2 * fm_frequency) * sin(2 * pi * fm_frequency / fs * i);
             s = amplitude * sin(aux);
             wave[i] = s;
         }
@@ -100,9 +100,9 @@ public:
 
         for(int i = 0; i < buffer_size; i++) // calculates the AM wave's value and stores it into wave
         {
-            s = amplitude * (1 + am_depth * sin(2 * pi * am_frequency * dt * i));
-            float aux = 2 * pi * carrier_frequency * dt * i;
-            aux += (fm_depth * carrier_frequency) / (2 * fm_frequency) * sin(2 * pi * fm_frequency * dt * i);
+            s = amplitude * (1 + am_depth * sin(2 * pi * am_frequency / fs * i));
+            float aux = 2 * pi * carrier_frequency / fs * i;
+            aux += (fm_depth * carrier_frequency) / (2 * fm_frequency) * sin(2 * pi * fm_frequency / fs * i);
             s *= sin(aux);
             aux = 1 + pow(am_depth, 2) / 2;
             aux = sqrt(aux);
@@ -120,7 +120,7 @@ private:
     float fm_frequency;
     float am_depth;
     float fm_depth;
-    float dt;
+    float fs;
     int buffer_size;
 };
 
@@ -137,7 +137,7 @@ BOOST_PYTHON_MODULE(PyAFM)
         .def("setFMFrequency", &AFMWave::setFMFrequency, arg("frequency"))
         .def("setAMDepth", &AFMWave::setAMDepth, arg("depth"))
         .def("setFMDepth", &AFMWave::setFMDepth, arg("depth"))
-        .def("setDT", &AFMWave::setDT, arg("dt"))
+        .def("setFS", &AFMWave::setFS, arg("fs"))
         .def("setBufferSize", &AFMWave::setBufferSize, arg("buffer_size"))
         .def("getCarrierFrequency", &AFMWave::getCarrierFrequency)
         .def("getAmplitude", &AFMWave::getAmplitude)
@@ -145,7 +145,7 @@ BOOST_PYTHON_MODULE(PyAFM)
         .def("getFMFrequency", &AFMWave::getFMFrequency)
         .def("getAMDepth", &AFMWave::getAMDepth)
         .def("getFMDepth", &AFMWave::getFMDepth)
-        .def("getDT", &AFMWave::getDT)
+        .def("getFS", &AFMWave::getFS)
         .def("getBufferSize", &AFMWave::getBufferSize)
         .def("getAMWave", &AFMWave::getAMWave)
         .def("getFMWave", &AFMWave::getFMWave)

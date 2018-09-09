@@ -61,7 +61,7 @@ class DockContainer(QWidget):
         # Adding some elements
         self.am_frequency_element = DockElement("AM Frequency:")
         self.am_depth_element = DockElement("AM Depth:")
-        self.dt_element = DockElement("DT:")
+        self.fs_element = DockElement("FS:")
 
         # Test button
         self.test_button = QPushButton("Test button")
@@ -81,12 +81,12 @@ class DockContainer(QWidget):
         # Add all widgets to the vertical_layout
         self.vertical_layout.addWidget(self.am_frequency_element)
         self.vertical_layout.addWidget(self.am_depth_element)
-        self.vertical_layout.addWidget(self.dt_element)
+        self.vertical_layout.addWidget(self.fs_element)
 
         # Set default values
         self.am_frequency_element.set_text(60)
         self.am_depth_element.set_text(1)
-        self.dt_element.set_text(0.0005)
+        self.fs_element.set_text(200)
 
         self.vertical_layout.addWidget(self.test_button, alignment=Qt.AlignCenter)
 
@@ -101,21 +101,17 @@ class DockContainer(QWidget):
         To be deleted
         :return: None
         """
-        wave = AFMWave(180, 4, 1024)
+        wave = AFMWave(1000, 1, 2048)
 
         wave.setAMFrequency(self.am_frequency_element.get_value())
         wave.setAMDepth(self.am_depth_element.get_value())
-        wave.setDT(self.dt_element.get_value())
+        wave.setFS(self.fs_element.get_value())
 
-        N = wave.getBufferSize()
-        # sample spacing
-        T = wave.getDT()
-        y = wave.getAMWave()
-        yf = scipy.fftpack.fft(y)
-        xf = np.linspace(0.0, 1.0 / (2.0 * T), N / 2)
+        yf = scipy.fftpack.fft(wave.getAMWave().reshape(wave.getBufferSize()))
+        d = len(yf) // 2
+        plt.plot(abs(yf[: (d - 1)]))
+        # plt.plot(wave.getAMWave())
 
-        fig, ax = plt.subplots()
-        ax.plot(xf, 2.0 / N * np.abs(yf[:N // 2]))
         plt.show()
 
 
