@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QTabWidget, QAction, QToolBar, QPushButton,
                              QVBoxLayout, QHBoxLayout, QGridLayout, QDockWidget, QLineEdit, QLabel, QSizePolicy,
-                             QMessageBox)
+                             QMessageBox, QGroupBox)
 from PyQt5.QtCore import Qt
 import sys
 from PyWave.PyAFM import AFMWave
@@ -167,12 +167,17 @@ class SettingsTabWidget(QWidget):
         self.left_layout = QGridLayout()
         self.right_layout = QGridLayout()
         self.horizontal_layout = QHBoxLayout()
+        self.vertical_layout = QVBoxLayout()
+
+        self.left_group = QGroupBox()
+        self.right_group = QGroupBox()
 
         # Labels for wave components on the left side
         self.left_components = []
         for i in range(4):
-            component = QLabel("Component " + str(i + 1))
+            component = QLabel(str(i + 1))
             component.setMaximumHeight(30)
+            component.setMinimumWidth(50)
             component.setProperty("UseSeparator", True)
             component.setProperty("SettingsLabel", True)
             self.left_components.append(component)
@@ -180,31 +185,152 @@ class SettingsTabWidget(QWidget):
         # Labels for wave components on the right side
         self.right_components = []
         for i in range(4):
-            component = QLabel("Component " + str(i + 1))
+            component = QLabel(str(i + 1))
             component.setMaximumHeight(30)
+            component.setMinimumWidth(50)
             component.setProperty("UseSeparator", True)
             component.setProperty("SettingsLabel", True)
             self.right_components.append(component)
 
         # Initial buttons that will be used to change wave parameters
         # Left side
-        self.left_buttons = []
+        self.left_buttons_frequency = []
+        self.left_buttons_modulation = []
+        self.left_buttons_am_deepness = []
+        self.left_buttons_fm_deepness = []
+        self.left_buttons_fm_phase = []
+        self.left_buttons_amplitude = []
         for i in range(4):
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
-            self.left_buttons.append(button)
+            self.left_buttons_frequency.append(button)
+
+            button = QPushButton("  +   ")
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            button.setObjectName("Parameter")
+            self.left_buttons_am_deepness.append(button)
+
+            button = QPushButton("  +   ")
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            button.setObjectName("Parameter")
+            self.left_buttons_modulation.append(button)
+
+            button = QPushButton("  +   ")
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            button.setObjectName("Parameter")
+            self.left_buttons_fm_deepness.append(button)
+
+            button = QPushButton("  +   ")
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            button.setObjectName("Parameter")
+            self.left_buttons_fm_phase.append(button)
+
+            button = QPushButton("  +   ")
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            button.setObjectName("Parameter")
+            self.left_buttons_amplitude.append(button)
 
         # Initial buttons that will be used to change wave parameters
         # Right side
-        self.right_buttons = []
+        self.right_buttons_frequency = []
+        self.right_buttons_modulation = []
+        self.right_buttons_am_deepness = []
+        self.right_buttons_fm_deepness = []
+        self.right_buttons_fm_phase = []
+        self.right_buttons_amplitude = []
         for i in range(4):
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
-            self.right_buttons.append(button)
+            self.right_buttons_frequency.append(button)
+
+            button = QPushButton("  +   ")
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            button.setObjectName("Parameter")
+            self.right_buttons_am_deepness.append(button)
+
+            button = QPushButton("  +   ")
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            button.setObjectName("Parameter")
+            self.right_buttons_fm_deepness.append(button)
+
+            button = QPushButton("  +   ")
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            button.setObjectName("Parameter")
+            self.right_buttons_modulation.append(button)
+
+            button = QPushButton("  +   ")
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            button.setObjectName("Parameter")
+            self.right_buttons_fm_phase.append(button)
+
+            button = QPushButton("  +   ")
+            button.setMaximumHeight(40)
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            button.setObjectName("Parameter")
+            self.right_buttons_amplitude.append(button)
+
+            # Right labels
+            self.right_carrier_frequency_label = QLabel("Carrier Frequency: ")
+            self.right_carrier_frequency_label.setProperty("UseSeparator", True)
+            self.right_carrier_frequency_label.setProperty("SettingsLabel", True)
+
+            self.right_modulation_label = QLabel("Modulation: ")
+            self.right_modulation_label.setProperty("UseSeparator", True)
+            self.right_modulation_label.setProperty("SettingsLabel", True)
+
+            self.right_am_percentage_label = QLabel("AM Percentage: ")
+            self.right_am_percentage_label.setProperty("UseSeparator", True)
+            self.right_am_percentage_label.setProperty("SettingsLabel", True)
+
+            self.right_fm_percentage_label = QLabel("FM Percentage: ")
+            self.right_fm_percentage_label.setProperty("UseSeparator", True)
+            self.right_fm_percentage_label.setProperty("SettingsLabel", True)
+
+            self.right_fm_phase_label = QLabel("FM Phase: ")
+            self.right_fm_phase_label.setProperty("UseSeparator", True)
+            self.right_fm_phase_label.setProperty("SettingsLabel", True)
+
+            self.right_amplitude_label = QLabel("Amplitude: ")
+            self.right_amplitude_label.setProperty("UseSeparator", True)
+            self.right_amplitude_label.setProperty("SettingsLabel", True)
+
+            # Left labels
+            self.left_carrier_frequency_label = QLabel("Carrier Frequency: ")
+            self.left_carrier_frequency_label.setProperty("UseSeparator", True)
+            self.left_carrier_frequency_label.setProperty("SettingsLabel", True)
+
+            self.left_modulation_label = QLabel("Modulation: ")
+            self.left_modulation_label.setProperty("UseSeparator", True)
+            self.left_modulation_label.setProperty("SettingsLabel", True)
+
+            self.left_am_percentage_label = QLabel("AM Percentage: ")
+            self.left_am_percentage_label.setProperty("UseSeparator", True)
+            self.left_am_percentage_label.setProperty("SettingsLabel", True)
+
+            self.left_fm_percentage_label = QLabel("FM Percentage: ")
+            self.left_fm_percentage_label.setProperty("UseSeparator", True)
+            self.left_fm_percentage_label.setProperty("SettingsLabel", True)
+
+            self.left_fm_phase_label = QLabel("FM Phase: ")
+            self.left_fm_phase_label.setProperty("UseSeparator", True)
+            self.left_fm_phase_label.setProperty("SettingsLabel", True)
+
+            self.left_amplitude_label = QLabel("Amplitude: ")
+            self.left_amplitude_label.setProperty("UseSeparator", True)
+            self.left_amplitude_label.setProperty("SettingsLabel", True)
 
         self.init_ui()
 
@@ -214,52 +340,65 @@ class SettingsTabWidget(QWidget):
         :return: None
         """
 
+        self.left_group.setLayout(self.left_layout)
+        self.left_group.setTitle("Left Ear")
+        self.left_group.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        self.right_group.setLayout(self.right_layout)
+        self.right_group.setTitle("Right Ear")
+        self.right_group.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
         self.left_layout.setSpacing(0)  # Set left layout spacing as zero
 
-        # Add the labels from the left side to left_layout
-        self.left_layout.addWidget(self.left_components[0], 0, 0)
-        self.left_layout.addWidget(self.left_components[1], 0, 1)
-        self.left_layout.addWidget(self.left_components[2], 0, 2)
-        self.left_layout.addWidget(self.left_components[3], 0, 3)
-        # Add initial buttons from the left side to left_layout
-        self.left_layout.addWidget(self.left_buttons[0], 1, 0)
-        self.left_layout.addWidget(self.left_buttons[1], 1, 1)
-        self.left_layout.addWidget(self.left_buttons[2], 1, 2)
-        self.left_layout.addWidget(self.left_buttons[3], 1, 3)
+        # Add the labels and initial buttons from the left side to left_layout
+        self.left_layout.addWidget(self.left_carrier_frequency_label, 1, 0)
+        self.left_layout.addWidget(self.left_modulation_label, 2, 0)
+        self.left_layout.addWidget(self.left_am_percentage_label, 3, 0)
+        self.left_layout.addWidget(self.left_fm_percentage_label, 4, 0)
+        self.left_layout.addWidget(self.left_fm_phase_label, 5, 0)
+        self.left_layout.addWidget(self.left_amplitude_label, 6, 0)
 
-        # Add empty widgets to align everything on the top
-        self.left_layout.addWidget(QWidget(self), 2, 0)
-        self.left_layout.addWidget(QWidget(self), 2, 1)
-        self.left_layout.addWidget(QWidget(self), 2, 2)
-        self.left_layout.addWidget(QWidget(self), 2, 3)
+        for i in range(4):
+            self.left_layout.addWidget(self.left_components[i], 0, i+1)
+            self.left_layout.addWidget(self.left_buttons_frequency[i], 1, i+1)
+            self.left_layout.addWidget(self.left_buttons_modulation[i], 2, i+1)
+            self.left_layout.addWidget(self.left_buttons_am_deepness[i], 3, i+1)
+            self.left_layout.addWidget(self.left_buttons_fm_deepness[i], 4, i+1)
+            self.left_layout.addWidget(self.left_buttons_fm_phase[i], 5, i+1)
+            self.left_layout.addWidget(self.left_buttons_amplitude[i], 6, i+1)
+            self.left_layout.addWidget(QWidget(self, flags=Qt.Widget), 7, i+1)
 
         self.right_layout.setSpacing(0)  # Set right layout spacing as zero
 
-        # Add the labels from the right side to right_layout
-        self.right_layout.addWidget(self.right_components[0], 0, 0)
-        self.right_layout.addWidget(self.right_components[1], 0, 1)
-        self.right_layout.addWidget(self.right_components[2], 0, 2)
-        self.right_layout.addWidget(self.right_components[3], 0, 3)
-        # Add initial buttons from the right side to right_layout
-        self.right_layout.addWidget(self.right_buttons[0], 1, 0)
-        self.right_layout.addWidget(self.right_buttons[1], 1, 1)
-        self.right_layout.addWidget(self.right_buttons[2], 1, 2)
-        self.right_layout.addWidget(self.right_buttons[3], 1, 3)
+        # Add the labels and initial buttons from the right side to right_layout
+        self.right_layout.addWidget(self.right_carrier_frequency_label, 1, 0)
+        self.right_layout.addWidget(self.right_modulation_label, 2, 0)
+        self.right_layout.addWidget(self.right_am_percentage_label, 3, 0)
+        self.right_layout.addWidget(self.right_fm_percentage_label, 4, 0)
+        self.right_layout.addWidget(self.right_fm_phase_label, 5, 0)
+        self.right_layout.addWidget(self.right_amplitude_label, 6, 0)
 
-        # Add empty widgets to align everything on the top
-        self.right_layout.addWidget(QWidget(self), 2, 0)
-        self.right_layout.addWidget(QWidget(self), 2, 1)
-        self.right_layout.addWidget(QWidget(self), 2, 2)
-        self.right_layout.addWidget(QWidget(self), 2, 3)
-
-        self.right_layout.setRowStretch(0, 1)
-        self.right_layout.setRowStretch(1, 3)
+        for i in range(4):
+            self.right_layout.addWidget(self.right_components[i], 0, i+1)
+            self.right_layout.addWidget(self.right_buttons_frequency[i], 1, i+1)
+            self.right_layout.addWidget(self.right_buttons_modulation[i], 2, i+1)
+            self.right_layout.addWidget(self.right_buttons_am_deepness[i], 3, i+1)
+            self.right_layout.addWidget(self.right_buttons_fm_deepness[i], 4, i+1)
+            self.right_layout.addWidget(self.right_buttons_fm_phase[i], 5, i+1)
+            self.right_layout.addWidget(self.right_buttons_amplitude[i], 6, i+1)
+            self.right_layout.addWidget(QWidget(self, flags=Qt.Widget), 7, i+1)
 
         # Add right and left layout to horizontal layout
-        self.horizontal_layout.addLayout(self.left_layout)
-        self.horizontal_layout.addLayout(self.right_layout)
+        self.horizontal_layout.addStretch()
+        self.horizontal_layout.addWidget(self.left_group, alignment=Qt.AlignHCenter)
+        self.horizontal_layout.addStretch()
+        self.horizontal_layout.addWidget(self.right_group, alignment=Qt.AlignHCenter)
+        self.horizontal_layout.addStretch()
+
+        self.vertical_layout.addLayout(self.horizontal_layout)
+        self.vertical_layout.addStretch()
         # Set self layout as horizontal_layout
-        self.setLayout(self.horizontal_layout)
+        self.setLayout(self.vertical_layout)
 
         self.show()  # Set self visible
 
@@ -283,7 +422,6 @@ class ResultsTabWidget(QWidget):
         """
 
         self.show()  # Set self visible
-
 
 
 class CentralWidget(QTabWidget):

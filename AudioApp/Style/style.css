@@ -104,3 +104,11 @@ QPushButton#Parameter
     padding : 0px;
     border-radius : 0px;
 }
+
+QGroupBox
+{
+    border : 1px solid #252525;
+    border-radius : 5px;
+    margin-top : 2ex;
+    padding : 3px;
+}
