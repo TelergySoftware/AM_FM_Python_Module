@@ -86,3 +86,21 @@ QToolBar
     min-height : 40px;
     min-width : 60px;
 }
+
+QLabel[UseSeparator="true"]
+{
+    border : 2px solid #252525;
+}
+
+QLabel[SettingsLabel="true"]
+{
+    background-color : #565656;
+}
+
+QPushButton#Parameter
+{
+    border : 2px solid #252525;
+    background-color : #787878;
+    padding : 0px;
+    border-radius : 0px;
+}
