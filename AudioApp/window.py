@@ -1,13 +1,41 @@
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QTabWidget, QAction, QToolBar, QPushButton,
                              QVBoxLayout, QHBoxLayout, QGridLayout, QDockWidget, QLineEdit, QLabel, QSizePolicy,
-                             QMessageBox, QGroupBox)
+                             QMessageBox, QGroupBox, QDesktopWidget, QInputDialog, QCheckBox)
 from PyQt5.QtCore import Qt
 import sys
 from PyWave.PyAFM import AFMWave
 import Calc
 import numpy as np
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import scipy.fftpack
+import random
+
+
+class PlotWidget(QWidget):
+
+    def __init__(self, parent=None):
+        
+        super(PlotWidget, self).__init__(parent=parent)
+
+        self.figure = Figure()
+        self.canvas = FigureCanvas(self.figure)
+
+        self.vertical_layout = QVBoxLayout()
+
+        self.vertical_layout.addWidget(self.canvas)
+        self.setLayout(self.vertical_layout)
+        self.plot()
+
+    def plot(self):
+
+        data = [random.random() for i in range(50)]
+
+        ax = self.figure.add_subplot(111)
+
+        ax.plot(data, "*-")
+        self.canvas.draw()
 
 
 class DockElement(QWidget):
@@ -61,10 +89,8 @@ class DockContainer(QWidget):
         self.vertical_layout = QVBoxLayout()  # Create a vertical layout container
 
         # Adding some elements
-        self.c_frequency_element = DockElement("Carrier Frequency:")
-        self.c_amplitude_element = DockElement("Carrier Amplitude:")
-        self.am_frequency_element = DockElement("AM Frequency:")
-        self.am_depth_element = DockElement("AM Depth:")
+        self.n_stimuli = DockElement("Number of stimuli:")
+        self.stimuli_duration = DockElement("Stimuli duration:")
         self.fs_element = DockElement("FS:")
 
         # Test button
@@ -83,17 +109,13 @@ class DockContainer(QWidget):
         self.test_button.clicked.connect(self.show_values)
 
         # Add all widgets to the vertical_layout
-        self.vertical_layout.addWidget(self.c_frequency_element)
-        self.vertical_layout.addWidget(self.c_amplitude_element)
-        self.vertical_layout.addWidget(self.am_frequency_element)
-        self.vertical_layout.addWidget(self.am_depth_element)
+        self.vertical_layout.addWidget(self.n_stimuli)
+        self.vertical_layout.addWidget(self.stimuli_duration)
         self.vertical_layout.addWidget(self.fs_element)
 
         # Set default values
-        self.c_frequency_element.set_text(1000)
-        self.c_amplitude_element.set_text(1)
-        self.am_frequency_element.set_text(60)
-        self.am_depth_element.set_text(1)
+        self.n_stimuli.set_text(10)
+        self.stimuli_duration.set_text(1.024)
         self.fs_element.set_text(200)
 
         self.vertical_layout.addWidget(self.test_button, alignment=Qt.AlignCenter)
@@ -154,6 +176,33 @@ class DockWidget(QDockWidget):
         self.show()  # Set self visible
 
 
+class ValuePicker(QInputDialog):
+
+    def __init__(self, parent=None):
+
+        super(ValuePicker, self).__init__(parent, flags=Qt.Widget)
+
+        self.label = QLabel("Test")
+
+        self.init_ui()
+
+    def init_ui(self):
+
+        self.show()
+
+
+class GroupBox(QGroupBox):
+
+    def __init__(self, parent=None):
+
+        super(GroupBox, self).__init__(parent)
+
+    def resizeEvent(self, e):
+
+        self.resize(self.parentWidget().width() / 2 - 10, self.size().height())
+        self.setMaximumWidth(self.parentWidget().width() / 2 - 10)
+
+
 class SettingsTabWidget(QWidget):
 
     def __init__(self, parent=None):
@@ -169,8 +218,19 @@ class SettingsTabWidget(QWidget):
         self.horizontal_layout = QHBoxLayout()
         self.vertical_layout = QVBoxLayout()
 
-        self.left_group = QGroupBox()
-        self.right_group = QGroupBox()
+        self.preview_fft_layout = QHBoxLayout()
+        self.preview_expected_layout = QHBoxLayout()
+
+        self.left_group = GroupBox(self)
+        self.right_group = GroupBox(self)
+
+        self.preview_fft_left = PlotWidget(self)
+        self.preview_fft_right = PlotWidget(self)
+        self.preview_expected_left = PlotWidget(self)
+        self.preview_expected_right = PlotWidget(self)
+
+        self.enable_left = QCheckBox()
+        self.enable_right = QCheckBox()
 
         # Labels for wave components on the left side
         self.left_components = []
@@ -178,6 +238,7 @@ class SettingsTabWidget(QWidget):
             component = QLabel(str(i + 1))
             component.setMaximumHeight(30)
             component.setMinimumWidth(50)
+            component.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             component.setProperty("UseSeparator", True)
             component.setProperty("SettingsLabel", True)
             self.left_components.append(component)
@@ -188,6 +249,7 @@ class SettingsTabWidget(QWidget):
             component = QLabel(str(i + 1))
             component.setMaximumHeight(30)
             component.setMinimumWidth(50)
+            component.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             component.setProperty("UseSeparator", True)
             component.setProperty("SettingsLabel", True)
             self.right_components.append(component)
@@ -205,36 +267,42 @@ class SettingsTabWidget(QWidget):
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_frequency)
             self.left_buttons_frequency.append(button)
 
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_am_percentage)
             self.left_buttons_am_deepness.append(button)
 
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_modulation)
             self.left_buttons_modulation.append(button)
 
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_fm_percentage)
             self.left_buttons_fm_deepness.append(button)
 
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_fm_phase)
             self.left_buttons_fm_phase.append(button)
 
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_amplitude)
             self.left_buttons_amplitude.append(button)
 
         # Initial buttons that will be used to change wave parameters
@@ -250,36 +318,42 @@ class SettingsTabWidget(QWidget):
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_frequency)
             self.right_buttons_frequency.append(button)
 
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_am_percentage)
             self.right_buttons_am_deepness.append(button)
 
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_fm_percentage)
             self.right_buttons_fm_deepness.append(button)
 
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_modulation)
             self.right_buttons_modulation.append(button)
 
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_fm_phase)
             self.right_buttons_fm_phase.append(button)
 
             button = QPushButton("  +   ")
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
+            button.clicked.connect(self.on_click_amplitude)
             self.right_buttons_amplitude.append(button)
 
             # Right labels
@@ -350,6 +424,13 @@ class SettingsTabWidget(QWidget):
 
         self.left_layout.setSpacing(0)  # Set left layout spacing as zero
 
+        self.enable_right.setChecked(True)
+        self.enable_left.setChecked(True)
+
+        # Add the check boxes
+        self.left_layout.addWidget(self.enable_left, 0, 0)
+        self.right_layout.addWidget(self.enable_right, 0, 0)
+
         # Add the labels and initial buttons from the left side to left_layout
         self.left_layout.addWidget(self.left_carrier_frequency_label, 1, 0)
         self.left_layout.addWidget(self.left_modulation_label, 2, 0)
@@ -389,18 +470,58 @@ class SettingsTabWidget(QWidget):
             self.right_layout.addWidget(QWidget(self, flags=Qt.Widget), 7, i+1)
 
         # Add right and left layout to horizontal layout
-        self.horizontal_layout.addStretch()
-        self.horizontal_layout.addWidget(self.left_group, alignment=Qt.AlignHCenter)
-        self.horizontal_layout.addStretch()
-        self.horizontal_layout.addWidget(self.right_group, alignment=Qt.AlignHCenter)
-        self.horizontal_layout.addStretch()
+        self.horizontal_layout.addWidget(self.left_group, alignment=Qt.AlignLeft)
+        self.horizontal_layout.addWidget(self.right_group, alignment=Qt.AlignLeft)
+
+        # Add previews to their layouts
+        self.preview_fft_layout.addWidget(self.preview_fft_left, alignment=Qt.AlignHCenter)
+        self.preview_fft_layout.addWidget(self.preview_fft_right, alignment=Qt.AlignHCenter)
+        self.preview_expected_layout.addWidget(self.preview_expected_left, alignment=Qt.AlignHCenter)
+        self.preview_expected_layout.addWidget(self.preview_expected_right, alignment=Qt.AlignHCenter)
 
         self.vertical_layout.addLayout(self.horizontal_layout)
+        self.vertical_layout.addLayout(self.preview_fft_layout)
+        self.vertical_layout.addLayout(self.preview_expected_layout)
         self.vertical_layout.addStretch()
         # Set self layout as horizontal_layout
         self.setLayout(self.vertical_layout)
 
         self.show()  # Set self visible
+
+    def on_click_frequency(self):
+        btn = self.sender()
+        value_picker = ValuePicker()
+
+    def on_click_modulation(self):
+        btn = self.sender()
+        btn.setText(btn.text() + "b")
+
+    def on_click_am_percentage(self):
+        btn = self.sender()
+        btn.setText(btn.text() + "c")
+
+    def on_click_fm_percentage(self):
+        btn = self.sender()
+        btn.setText(btn.text() + "d")
+
+    def on_click_fm_phase(self):
+        btn = self.sender()
+        btn.setText(btn.text() + "e")
+
+    def on_click_amplitude(self):
+        btn = self.sender()
+        btn.setText(btn.text() + "f")
+
+    def test_event(self):
+        print(self.right_group.size())
+
+    def resizeEvent(self, e):
+
+        self.left_group.resize(self.size().width() / 2 - 10, self.left_group.size().height())
+        self.left_group.setMaximumWidth(self.width() / 2 - 10)
+
+        self.right_group.resize(self.size().width() / 2 - 10, self.right_group.size().height())
+        self.right_group.setMaximumWidth(self.width() / 2 - 10)
 
 
 class ResultsTabWidget(QWidget):
@@ -507,6 +628,8 @@ class MainWindow(QMainWindow):
         self.file_menu.addAction(self.exit_action)
         self.help_menu.addAction(self.about_action)
 
+        desktop = QDesktopWidget()
+        self.setMaximumSize(desktop.size())
         self.showMaximized()
         self.show()  # Set self visible
 
