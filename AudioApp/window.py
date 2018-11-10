@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QTabWidget, QAction, QToolBar, QPushButton,
                              QVBoxLayout, QHBoxLayout, QGridLayout, QDockWidget, QLineEdit, QLabel, QSizePolicy,
-                             QMessageBox, QGroupBox, QDesktopWidget, QInputDialog, QCheckBox)
+                             QMessageBox, QGroupBox, QDesktopWidget, QCheckBox)
 from PyQt5.QtCore import Qt
 import sys
 from PyWave.PyAFM import AFMWave
@@ -17,16 +17,25 @@ class PlotWidget(QWidget):
 
     def __init__(self, parent=None):
         
-        super(PlotWidget, self).__init__(parent=parent)
+        super(PlotWidget, self).__init__(parent=parent, flags=Qt.Widget)
 
+        # Setting up graph style
+        plt.style.use("grayscale")
+        plt.rcParams['axes.facecolor'] = "61656b"
+        plt.rcParams['figure.facecolor'] = "61656b"
+        plt.rcParams.update({"font.size": 8})
+
+        # Starting Figure and Canvas
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
 
+        # Setting up the layout
         self.vertical_layout = QVBoxLayout()
-
-        self.vertical_layout.addWidget(self.canvas)
+        self.vertical_layout.addWidget(self.canvas, alignment=Qt.AlignHCenter)
         self.setLayout(self.vertical_layout)
-        self.plot()
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        self.plot()  # Plot data
 
     def plot(self):
 
@@ -34,7 +43,7 @@ class PlotWidget(QWidget):
 
         ax = self.figure.add_subplot(111)
 
-        ax.plot(data, "*-")
+        ax.plot(data, "-")
         self.canvas.draw()
 
 
@@ -176,21 +185,6 @@ class DockWidget(QDockWidget):
         self.show()  # Set self visible
 
 
-class ValuePicker(QInputDialog):
-
-    def __init__(self, parent=None):
-
-        super(ValuePicker, self).__init__(parent, flags=Qt.Widget)
-
-        self.label = QLabel("Test")
-
-        self.init_ui()
-
-    def init_ui(self):
-
-        self.show()
-
-
 class GroupBox(QGroupBox):
 
     def __init__(self, parent=None):
@@ -213,24 +207,26 @@ class SettingsTabWidget(QWidget):
         """
         super(SettingsTabWidget, self).__init__(parent=parent, flags=Qt.Widget)
 
-        self.left_layout = QGridLayout()
-        self.right_layout = QGridLayout()
-        self.horizontal_layout = QHBoxLayout()
-        self.vertical_layout = QVBoxLayout()
+        self.left_layout = QGridLayout()  # Layout that will gather the left parameters
+        self.right_layout = QGridLayout()  # Layout that will gather the right parameters
+        self.horizontal_layout = QHBoxLayout()  # Layout that will gather the left and right grids
+        self.vertical_layout = QVBoxLayout()  # Layout that will gather all layouts in this tab
 
-        self.preview_fft_layout = QHBoxLayout()
-        self.preview_expected_layout = QHBoxLayout()
+        self.preview_fft_layout = QHBoxLayout()  # Layout that will gather the FFT previews
+        self.preview_expected_layout = QHBoxLayout()  # Layout that will gather the expected results previews
 
-        self.left_group = GroupBox(self)
-        self.right_group = GroupBox(self)
+        self.left_group = GroupBox(self)  # Separator for the left parameters
+        self.right_group = GroupBox(self)  # Separator for the right parameters
+        # self.left_preview = GroupBox(self)  # Separator for the left previews
+        # self.right_preview = GroupBox(self)  # Separator for the right previews
 
-        self.preview_fft_left = PlotWidget(self)
-        self.preview_fft_right = PlotWidget(self)
-        self.preview_expected_left = PlotWidget(self)
-        self.preview_expected_right = PlotWidget(self)
+        self.preview_fft_left = PlotWidget(self)  # Left FFT preview
+        self.preview_fft_right = PlotWidget(self)  # Right FFT preview
+        self.preview_expected_left = PlotWidget(self)  # Left expected result preview
+        self.preview_expected_right = PlotWidget(self)  # Right expected result preview
 
-        self.enable_left = QCheckBox()
-        self.enable_right = QCheckBox()
+        self.enable_left = QCheckBox()  # Checkbox that will enable/disable the left components
+        self.enable_right = QCheckBox()  # Checkbox that will enable/disable the right components
 
         # Labels for wave components on the left side
         self.left_components = []
@@ -425,7 +421,10 @@ class SettingsTabWidget(QWidget):
         self.left_layout.setSpacing(0)  # Set left layout spacing as zero
 
         self.enable_right.setChecked(True)
+        self.enable_right.stateChanged.connect(self.change_check)
+
         self.enable_left.setChecked(True)
+        self.enable_left.stateChanged.connect(self.change_check)
 
         # Add the check boxes
         self.left_layout.addWidget(self.enable_left, 0, 0)
@@ -474,10 +473,10 @@ class SettingsTabWidget(QWidget):
         self.horizontal_layout.addWidget(self.right_group, alignment=Qt.AlignLeft)
 
         # Add previews to their layouts
-        self.preview_fft_layout.addWidget(self.preview_fft_left, alignment=Qt.AlignHCenter)
-        self.preview_fft_layout.addWidget(self.preview_fft_right, alignment=Qt.AlignHCenter)
-        self.preview_expected_layout.addWidget(self.preview_expected_left, alignment=Qt.AlignHCenter)
-        self.preview_expected_layout.addWidget(self.preview_expected_right, alignment=Qt.AlignHCenter)
+        self.preview_fft_layout.addWidget(self.preview_fft_left, alignment=Qt.AlignCenter)
+        self.preview_fft_layout.addWidget(self.preview_fft_right, alignment=Qt.AlignCenter)
+        self.preview_expected_layout.addWidget(self.preview_expected_left, alignment=Qt.AlignCenter)
+        self.preview_expected_layout.addWidget(self.preview_expected_right, alignment=Qt.AlignCenter)
 
         self.vertical_layout.addLayout(self.horizontal_layout)
         self.vertical_layout.addLayout(self.preview_fft_layout)
@@ -490,7 +489,7 @@ class SettingsTabWidget(QWidget):
 
     def on_click_frequency(self):
         btn = self.sender()
-        value_picker = ValuePicker()
+        btn.setText(btn.text() + "a")
 
     def on_click_modulation(self):
         btn = self.sender()
@@ -522,6 +521,56 @@ class SettingsTabWidget(QWidget):
 
         self.right_group.resize(self.size().width() / 2 - 10, self.right_group.size().height())
         self.right_group.setMaximumWidth(self.width() / 2 - 10)
+
+    def change_check(self):
+        check = self.sender()
+        if check is self.enable_left:
+            if not self.enable_left.checkState():
+                for b1, b2, b3, b4, b5, b6 in zip(self.left_buttons_frequency, self.left_buttons_amplitude,
+                                                  self.left_buttons_fm_phase, self.left_buttons_fm_deepness,
+                                                  self.left_buttons_am_deepness, self.left_buttons_modulation):
+
+                    b1.setDisabled(True)
+                    b2.setDisabled(True)
+                    b3.setDisabled(True)
+                    b4.setDisabled(True)
+                    b5.setDisabled(True)
+                    b6.setDisabled(True)
+
+            else:
+                for b1, b2, b3, b4, b5, b6 in zip(self.left_buttons_frequency, self.left_buttons_amplitude,
+                                                  self.left_buttons_fm_phase, self.left_buttons_fm_deepness,
+                                                  self.left_buttons_am_deepness, self.left_buttons_modulation):
+                    b1.setDisabled(False)
+                    b2.setDisabled(False)
+                    b3.setDisabled(False)
+                    b4.setDisabled(False)
+                    b5.setDisabled(False)
+                    b6.setDisabled(False)
+
+        elif check is self.enable_right:
+            if not self.enable_right.checkState():
+                for b1, b2, b3, b4, b5, b6 in zip(self.right_buttons_frequency, self.right_buttons_amplitude,
+                                                  self.right_buttons_fm_phase, self.right_buttons_fm_deepness,
+                                                  self.right_buttons_am_deepness, self.right_buttons_modulation):
+
+                    b1.setDisabled(True)
+                    b2.setDisabled(True)
+                    b3.setDisabled(True)
+                    b4.setDisabled(True)
+                    b5.setDisabled(True)
+                    b6.setDisabled(True)
+
+            else:
+                for b1, b2, b3, b4, b5, b6 in zip(self.right_buttons_frequency, self.right_buttons_amplitude,
+                                                  self.right_buttons_fm_phase, self.right_buttons_fm_deepness,
+                                                  self.right_buttons_am_deepness, self.right_buttons_modulation):
+                    b1.setDisabled(False)
+                    b2.setDisabled(False)
+                    b3.setDisabled(False)
+                    b4.setDisabled(False)
+                    b5.setDisabled(False)
+                    b6.setDisabled(False)
 
 
 class ResultsTabWidget(QWidget):
