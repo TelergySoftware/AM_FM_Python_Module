@@ -499,23 +499,23 @@ class SettingsTabWidget(QWidget):
 
     def on_click_modulation(self):
         btn = self.sender()
-        btn.setText(btn.text() + "b")
+        ModulationPicker(btn)
 
     def on_click_am_percentage(self):
         btn = self.sender()
-        btn.setText(btn.text() + "c")
+        AMPercentagePicker(btn)
 
     def on_click_fm_percentage(self):
         btn = self.sender()
-        btn.setText(btn.text() + "d")
+        FMPercentagePicker(btn)
 
     def on_click_fm_phase(self):
         btn = self.sender()
-        btn.setText(btn.text() + "e")
+        FMPhasePicker(btn)
 
     def on_click_amplitude(self):
         btn = self.sender()
-        btn.setText(btn.text() + "f")
+        AmplitudePicker(btn)
 
     def test_event(self):
         print(self.right_group.size())

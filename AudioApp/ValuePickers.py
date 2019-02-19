@@ -4,11 +4,11 @@ from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import Qt
 
 
-class FrequencyPickerCW(QWidget):
+class CentralWidget(QWidget):
 
     def __init__(self, parent=None):
 
-        super(FrequencyPickerCW, self).__init__(parent=parent, flags=Qt.Widget)
+        super(CentralWidget, self).__init__(parent=parent, flags=Qt.Widget)
 
         self.v_layout = QVBoxLayout()
         self.h_layout = QHBoxLayout()
@@ -55,6 +55,15 @@ class FrequencyPickerCW(QWidget):
         self.parent().ok = False
         self.parent().close()
 
+    def keyReleaseEvent(self, e):
+
+        print(Qt.Key_Return)
+
+        if e.key() == Qt.Key_Return:
+            self.ok_event()
+        elif e.key() == Qt.Key_Escape:
+            self.cancel_event()
+
 
 class FrequencyPicker(QMainWindow):
 
@@ -65,7 +74,7 @@ class FrequencyPicker(QMainWindow):
         self.ok = False
         self.value = ""
 
-        self.center_widget = FrequencyPickerCW(self)
+        self.center_widget = CentralWidget(self)
         self.setCentralWidget(self.center_widget)
 
         self.x_pos = QCursor.pos().x() - 10
@@ -74,6 +83,8 @@ class FrequencyPicker(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
+
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
 
         self.move(self.x_pos, self.y_pos)
         self.resize(120, 80)
@@ -87,5 +98,272 @@ class FrequencyPicker(QMainWindow):
 
     def closeEvent(self, e):
 
-        if self.ok:
+        if self.ok and self.value is not "":
             self.parent().setText(self.value)
+            e.accept()
+
+        elif not self.ok:
+            e.accept()
+
+        else:
+            e.ignore()
+
+
+class ModulationCW(CentralWidget):
+
+    def __init__(self, parent=None):
+
+        super(ModulationCW, self).__init__(parent=parent)
+        self.label.setText("Choose the modulation value:")
+
+
+class ModulationPicker(QMainWindow):
+
+    def __init__(self, parent: QPushButton):
+
+        super(ModulationPicker, self).__init__(parent=parent, flags=Qt.Window)
+
+        self.ok = False
+        self.value = ""
+
+        self.center_widget = ModulationCW(self)
+        self.setCentralWidget(self.center_widget)
+
+        self.x_pos = QCursor.pos().x() - 10
+        self.y_pos = QCursor.pos().y() - 10
+
+        self.init_ui()
+
+    def init_ui(self):
+
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+
+        self.move(self.x_pos, self.y_pos)
+        self.resize(120, 80)
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
+        self.show()
+
+    def leaveEvent(self, e):
+
+        self.close()
+
+    def closeEvent(self, e):
+
+        if self.ok and self.value is not "":
+            self.parent().setText(self.value)
+            e.accept()
+
+        elif not self.ok:
+            e.accept()
+
+        else:
+            e.ignore()
+
+
+class AMPercentageCW(CentralWidget):
+
+    def __init__(self, parent=None):
+
+        super(AMPercentageCW, self).__init__(parent=parent)
+        self.label.setText("Choose the AM percentage value:")
+
+
+class AMPercentagePicker(QMainWindow):
+
+    def __init__(self, parent: QPushButton):
+
+        super(AMPercentagePicker, self).__init__(parent=parent, flags=Qt.Window)
+
+        self.ok = False
+        self.value = ""
+
+        self.center_widget = AMPercentageCW(self)
+        self.setCentralWidget(self.center_widget)
+
+        self.x_pos = QCursor.pos().x() - 10
+        self.y_pos = QCursor.pos().y() - 10
+
+        self.init_ui()
+
+    def init_ui(self):
+
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+
+        self.move(self.x_pos, self.y_pos)
+        self.resize(120, 80)
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
+        self.show()
+
+    def leaveEvent(self, e):
+
+        self.close()
+
+    def closeEvent(self, e):
+
+        if self.ok and self.value is not "":
+            self.parent().setText(self.value)
+            e.accept()
+
+        elif not self.ok:
+            e.accept()
+
+        else:
+            e.ignore()
+
+
+class FMPercentageCW(CentralWidget):
+
+    def __init__(self, parent=None):
+
+        super(FMPercentageCW, self).__init__(parent=parent)
+        self.label.setText("Choose the FM percentage value:")
+
+
+class FMPercentagePicker(QMainWindow):
+
+    def __init__(self, parent: QPushButton):
+
+        super(FMPercentagePicker, self).__init__(parent=parent, flags=Qt.Window)
+
+        self.ok = False
+        self.value = ""
+
+        self.center_widget = FMPercentageCW(self)
+        self.setCentralWidget(self.center_widget)
+
+        self.x_pos = QCursor.pos().x() - 10
+        self.y_pos = QCursor.pos().y() - 10
+
+        self.init_ui()
+
+    def init_ui(self):
+
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+
+        self.move(self.x_pos, self.y_pos)
+        self.resize(120, 80)
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
+        self.show()
+
+    def leaveEvent(self, e):
+
+        self.close()
+
+    def closeEvent(self, e):
+
+        if self.ok and self.value is not "":
+            self.parent().setText(self.value)
+            e.accept()
+
+        elif not self.ok:
+            e.accept()
+
+        else:
+            e.ignore()
+
+
+class FMPhaseCW(CentralWidget):
+
+    def __init__(self, parent=None):
+
+        super(FMPhaseCW, self).__init__(parent=parent)
+        self.label.setText("Choose the FM phase value:")
+
+
+class FMPhasePicker(QMainWindow):
+
+    def __init__(self, parent: QPushButton):
+
+        super(FMPhasePicker, self).__init__(parent=parent, flags=Qt.Window)
+
+        self.ok = False
+        self.value = ""
+
+        self.center_widget = FMPercentageCW(self)
+        self.setCentralWidget(self.center_widget)
+
+        self.x_pos = QCursor.pos().x() - 10
+        self.y_pos = QCursor.pos().y() - 10
+
+        self.init_ui()
+
+    def init_ui(self):
+
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+
+        self.move(self.x_pos, self.y_pos)
+        self.resize(120, 80)
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
+        self.show()
+
+    def leaveEvent(self, e):
+
+        self.close()
+
+    def closeEvent(self, e):
+
+        if self.ok and self.value is not "":
+            self.parent().setText(self.value)
+            e.accept()
+
+        elif not self.ok:
+            e.accept()
+
+        else:
+            e.ignore()
+
+
+class AmplitudeCW(CentralWidget):
+
+    def __init__(self, parent=None):
+
+        super(AmplitudeCW, self).__init__(parent=parent)
+        self.label.setText("Choose the Amplitude value:")
+
+
+class AmplitudePicker(QMainWindow):
+
+    def __init__(self, parent: QPushButton):
+
+        super(AmplitudePicker, self).__init__(parent=parent, flags=Qt.Window)
+
+        self.ok = False
+        self.value = ""
+
+        self.center_widget = FMPercentageCW(self)
+        self.setCentralWidget(self.center_widget)
+
+        self.x_pos = QCursor.pos().x() - 10
+        self.y_pos = QCursor.pos().y() - 10
+
+        self.init_ui()
+
+    def init_ui(self):
+
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+
+        self.move(self.x_pos, self.y_pos)
+        self.resize(120, 80)
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
+        self.show()
+
+    def leaveEvent(self, e):
+
+        self.close()
+
+    def closeEvent(self, e):
+
+        if self.ok and self.value is not "":
+            self.parent().setText(self.value)
+            e.accept()
+
+        elif not self.ok:
+            e.accept()
+
+        else:
+            e.ignore()
