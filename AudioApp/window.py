@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 import sys
 from PyWave.PyAFM import AFMWave
 import Calc
+from ValuePickers import *
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -49,7 +50,7 @@ class PlotWidget(QWidget):
 
 class DockElement(QWidget):
 
-    def __init__(self, label: str="", parent=None):
+    def __init__(self, label: str = "", parent=None):
 
         super(DockElement, self).__init__(parent=parent, flags=Qt.Widget)
 
@@ -488,8 +489,13 @@ class SettingsTabWidget(QWidget):
         self.show()  # Set self visible
 
     def on_click_frequency(self):
-        btn = self.sender()
-        btn.setText(btn.text() + "a")
+        """
+        When the frequency button is clicked, this method will be called.
+        OBS.: When the mouse leaves the pop-up window, the pop-up will close itself.
+        :return: None
+        """
+        btn = self.sender()  # Gets the button responsible for the call
+        FrequencyPicker(btn)  # Calls the pop-up value picker
 
     def on_click_modulation(self):
         btn = self.sender()
