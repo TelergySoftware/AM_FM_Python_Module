@@ -36,6 +36,11 @@ QPushButton:pressed
     border-style : inset
 }
 
+QPushButton:hover
+{
+    background-color : #444548;
+}
+
 QDockWidget
 {
     background: #606268;
@@ -103,6 +108,16 @@ QPushButton#Parameter
     background-color : #787878;
     padding : 0px;
     border-radius : 0px;
+}
+
+QPushButton#Parameter:hover
+{
+    background-color : #989898;
+}
+
+QPushButton#Parameter:pressed
+{
+    background-color : #787888;
 }
 
 QGroupBox

@@ -55,9 +55,7 @@ class CentralWidget(QWidget):
         self.parent().ok = False
         self.parent().close()
 
-    def keyReleaseEvent(self, e):
-
-        print(Qt.Key_Return)
+    def keyPressEvent(self, e):
 
         if e.key() == Qt.Key_Return:
             self.ok_event()
@@ -73,6 +71,7 @@ class FrequencyPicker(QMainWindow):
 
         self.ok = False
         self.value = ""
+        self.closed = False
 
         self.center_widget = CentralWidget(self)
         self.setCentralWidget(self.center_widget)
@@ -98,8 +97,14 @@ class FrequencyPicker(QMainWindow):
 
     def closeEvent(self, e):
 
-        if self.ok and self.value is not "":
+        if self.ok and self.value is not "" and not self.closed:
             self.parent().setText(self.value)
+            parent = self.parent().parent()
+            parent.parent().preview_fft_left.plot()
+            parent.parent().preview_fft_right.plot()
+            parent.parent().preview_expected_left.plot()
+            parent.parent().preview_expected_right.plot()
+            self.closed = True
             e.accept()
 
         elif not self.ok:
@@ -125,6 +130,7 @@ class ModulationPicker(QMainWindow):
 
         self.ok = False
         self.value = ""
+        self.closed = False
 
         self.center_widget = ModulationCW(self)
         self.setCentralWidget(self.center_widget)
@@ -150,8 +156,14 @@ class ModulationPicker(QMainWindow):
 
     def closeEvent(self, e):
 
-        if self.ok and self.value is not "":
+        if self.ok and self.value is not "" and not self.closed:
             self.parent().setText(self.value)
+            parent = self.parent().parent()
+            parent.parent().preview_fft_left.plot()
+            parent.parent().preview_fft_right.plot()
+            parent.parent().preview_expected_left.plot()
+            parent.parent().preview_expected_right.plot()
+            self.closed = True
             e.accept()
 
         elif not self.ok:
@@ -177,6 +189,7 @@ class AMPercentagePicker(QMainWindow):
 
         self.ok = False
         self.value = ""
+        self.closed = False
 
         self.center_widget = AMPercentageCW(self)
         self.setCentralWidget(self.center_widget)
@@ -202,8 +215,14 @@ class AMPercentagePicker(QMainWindow):
 
     def closeEvent(self, e):
 
-        if self.ok and self.value is not "":
+        if self.ok and self.value is not "" and not self.closed:
             self.parent().setText(self.value)
+            parent = self.parent().parent()
+            parent.parent().preview_fft_left.plot()
+            parent.parent().preview_fft_right.plot()
+            parent.parent().preview_expected_left.plot()
+            parent.parent().preview_expected_right.plot()
+            self.closed = True
             e.accept()
 
         elif not self.ok:
@@ -229,6 +248,7 @@ class FMPercentagePicker(QMainWindow):
 
         self.ok = False
         self.value = ""
+        self.closed = False
 
         self.center_widget = FMPercentageCW(self)
         self.setCentralWidget(self.center_widget)
@@ -254,8 +274,14 @@ class FMPercentagePicker(QMainWindow):
 
     def closeEvent(self, e):
 
-        if self.ok and self.value is not "":
+        if self.ok and self.value is not "" and not self.closed:
             self.parent().setText(self.value)
+            parent = self.parent().parent()
+            parent.parent().preview_fft_left.plot()
+            parent.parent().preview_fft_right.plot()
+            parent.parent().preview_expected_left.plot()
+            parent.parent().preview_expected_right.plot()
+            self.closed = True
             e.accept()
 
         elif not self.ok:
@@ -281,6 +307,7 @@ class FMPhasePicker(QMainWindow):
 
         self.ok = False
         self.value = ""
+        self.closed = False
 
         self.center_widget = FMPercentageCW(self)
         self.setCentralWidget(self.center_widget)
@@ -306,8 +333,14 @@ class FMPhasePicker(QMainWindow):
 
     def closeEvent(self, e):
 
-        if self.ok and self.value is not "":
+        if self.ok and self.value is not "" and not self.closed:
             self.parent().setText(self.value)
+            parent = self.parent().parent()
+            parent.parent().preview_fft_left.plot()
+            parent.parent().preview_fft_right.plot()
+            parent.parent().preview_expected_left.plot()
+            parent.parent().preview_expected_right.plot()
+            self.closed = True
             e.accept()
 
         elif not self.ok:
@@ -333,6 +366,7 @@ class AmplitudePicker(QMainWindow):
 
         self.ok = False
         self.value = ""
+        self.closed = False
 
         self.center_widget = FMPercentageCW(self)
         self.setCentralWidget(self.center_widget)
@@ -358,8 +392,14 @@ class AmplitudePicker(QMainWindow):
 
     def closeEvent(self, e):
 
-        if self.ok and self.value is not "":
+        if self.ok and self.value is not "" and not self.closed:
             self.parent().setText(self.value)
+            parent = self.parent().parent()
+            parent.parent().preview_fft_left.plot()
+            parent.parent().preview_fft_right.plot()
+            parent.parent().preview_expected_left.plot()
+            parent.parent().preview_expected_right.plot()
+            self.closed = True
             e.accept()
 
         elif not self.ok:

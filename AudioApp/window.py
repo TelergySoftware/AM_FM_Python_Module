@@ -42,8 +42,8 @@ class PlotWidget(QWidget):
 
         data = [random.random() for i in range(50)]
 
+        self.figure.clear()
         ax = self.figure.add_subplot(111)
-
         ax.plot(data, "-")
         self.canvas.draw()
 
@@ -260,42 +260,42 @@ class SettingsTabWidget(QWidget):
         self.left_buttons_fm_phase = []
         self.left_buttons_amplitude = []
         for i in range(4):
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
             button.clicked.connect(self.on_click_frequency)
             self.left_buttons_frequency.append(button)
 
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
             button.clicked.connect(self.on_click_am_percentage)
             self.left_buttons_am_deepness.append(button)
 
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
             button.clicked.connect(self.on_click_modulation)
             self.left_buttons_modulation.append(button)
 
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
             button.clicked.connect(self.on_click_fm_percentage)
             self.left_buttons_fm_deepness.append(button)
 
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
             button.clicked.connect(self.on_click_fm_phase)
             self.left_buttons_fm_phase.append(button)
 
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
@@ -311,42 +311,42 @@ class SettingsTabWidget(QWidget):
         self.right_buttons_fm_phase = []
         self.right_buttons_amplitude = []
         for i in range(4):
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
             button.clicked.connect(self.on_click_frequency)
             self.right_buttons_frequency.append(button)
 
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
             button.clicked.connect(self.on_click_am_percentage)
             self.right_buttons_am_deepness.append(button)
 
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
             button.clicked.connect(self.on_click_fm_percentage)
             self.right_buttons_fm_deepness.append(button)
 
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
             button.clicked.connect(self.on_click_modulation)
             self.right_buttons_modulation.append(button)
 
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
             button.clicked.connect(self.on_click_fm_phase)
             self.right_buttons_fm_phase.append(button)
 
-            button = QPushButton("  +   ")
+            button = QPushButton("  +   ", self)
             button.setMaximumHeight(40)
             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             button.setObjectName("Parameter")
